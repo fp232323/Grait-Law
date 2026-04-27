@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Dark navy background with rounded corners -->
+  <rect width="64" height="64" rx="12" fill="#04091A"/>
+
+  <!-- Outer arc / partial ring (top-left, like the logo's G shape) -->
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#1A6EFF" stroke-width="3" stroke-dasharray="103 35" stroke-dashoffset="-9"/>
+
+  <!-- Inner circuit-style ring -->
+  <circle cx="32" cy="32" r="15" fill="none" stroke="#00D4FF" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- G letterform – built from arc + crossbar -->
+  <!-- Main G arc -->
+  <path d="M 32 14
+             A 18 18 0 1 0 50 32"
+        fill="none"
+        stroke="url(#gGradient)"
+        stroke-width="5"
+        stroke-linecap="round"/>
+
+  <!-- G crossbar -->
+  <line x1="38" y1="32" x2="50" y2="32"
+        stroke="url(#gGradient)" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Scales dot accent – top right -->
+  <circle cx="50" cy="16" r="3" fill="#00D4FF" opacity="0.7"/>
+  <circle cx="50" cy="16" r="5" fill="none" stroke="#00D4FF" stroke-width="1" opacity="0.3"/>
+
+  <!-- Small node dots (circuit feel) -->
+  <circle cx="14" cy="32" r="1.5" fill="#00D4FF" opacity="0.5"/>
+  <circle cx="32" cy="50" r="1.5" fill="#00D4FF" opacity="0.5"/>
+
+  <defs>
+    <linearGradient id="gGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#1A6EFF"/>
+    </linearGradient>
+  </defs>
+</svg>

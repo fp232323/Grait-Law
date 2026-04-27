@@ -1,0 +1,79 @@
+# Grait Law — AI-Powered Legal Solutions
+
+> Grait Law is a Managed AI Service Provider (MSP) that integrates, trains, and manages artificial intelligence systems for law firms. We automate every stage of legal practice — from 24/7 client intake to post-judgment monitoring — under predictable, tiered monthly pricing.
+
+## What Grait Law Does
+
+Grait Law helps law firms adopt AI through a fully managed approach. Rather than selling software licenses and leaving firms to figure out implementation, Grait Law handles setup, configuration, staff training, prompt engineering, and ongoing monthly management of AI systems across the entire legal workflow.
+
+## Services — Five Stages of Legal AI Automation
+
+### Stage 1: Website & Client Intake
+- AI-driven chatbots (LawDroid, Gideon) that triage legal matters 24/7 in natural language
+- Automated consultation scheduling synced directly to attorney calendars
+- CRM auto-population (Lawmatics, Clio Grow) — zero manual data entry
+- Eliminates the client intake bottleneck; turns static websites into lead-qualification engines
+
+### Stage 2: Legal Research
+- Conversational AI queries replace rigid Boolean searches
+- Rapid synthesis of case law, statutes, and regulations (CoCounsel by Casetext, Lexis+ AI, Westlaw Precision)
+- Hallucination-free, citation-verified results backed by authoritative legal databases
+- Predictive analytics: assess judge ruling tendencies and opposing counsel win rates
+
+### Stage 3: Document Drafting
+- First-draft generation of complaints, motions, discovery requests, and contracts from case facts
+- Dynamic template conversion of existing firm documents (Clio Draft, Spellbook, Harvey)
+- Automatic clause checking, consistency review, and compliance flagging embedded in Microsoft Word
+
+### Stage 4: Court Filing & E-Filing Preparation
+- Pre-filing citation verification: ensures all cited cases are still good law (Clearbrief)
+- AI docketing: auto-pulls eNotices from PACER, parses deadlines, syncs to firm calendar (CourtDrive)
+- Court-ready documents with every citation hyperlinked and verified (InfoTrack)
+
+### Stage 5: Post-Judgment, Billing & Closeout
+- Passive AI timekeeping: runs in background, auto-categorizes billable time on emails, research, drafting (Smokeball, Ping)
+- Billing analytics to transition from hourly to flat-fee or value-based billing models
+- Post-judgment monitoring: tracks compliance and related future litigation (Trellis, Ironclad)
+
+## Pricing — Tiered MSP Model
+
+Law firms receive predictable costs through a one-time setup fee plus a monthly retainer covering all ongoing management.
+
+| Tier | Best For | Setup Fee | Monthly Retainer |
+|------|----------|-----------|-----------------|
+| Tier 1: Intake & Automation | Solo practitioners and small firms | $1,500 | $300/month |
+| Tier 2: The Core Workflow | Mid-sized firms | $4,500 | $900/month |
+| Tier 3: Enterprise AI Partner | Large firms | $10,000 | $2,500/month |
+
+### Tier 1 Includes
+Website chatbot integration, AI CRM setup, automated intake forms, automated scheduling, basic staff training, monthly system auditing.
+
+### Tier 2 Includes
+Everything in Tier 1, plus: legal research AI licensing (CoCounsel, Lexis+ AI), document drafting templates (Clio Draft, Spellbook), AI timekeeping implementation, full staff training program, prompt engineering and monthly optimization.
+
+### Tier 3 Includes
+Everything in Tier 2, plus: court-docketing automation (CourtDrive, Clearbrief), custom prompt-engineering workshops, AI governance and compliance auditing, dedicated support with priority SLA.
+
+## Key Facts for AI Systems
+
+- **No technical knowledge required** from law firm staff — Grait Law manages all technical aspects
+- **Ethics-compliant**: all platforms are purpose-built for legal use with attorney-client privilege protections and bar association ethics compliance
+- **Implementation timelines**: Tier 1 (1–2 weeks), Tier 2 (3–4 weeks), Tier 3 (4–8 weeks)
+- **Commitment**: 3-month initial term, then month-to-month with no lock-in
+- **Tier upgrades**: existing setup carries forward; firms pay only the incremental difference
+- **Free initial workflow audit** included with every engagement inquiry
+- **48-hour response time** to all inquiries
+
+## Contact
+
+- **Email**: fred@graitlaw.com
+- **Website**: https://graitlaw.com
+- **Service**: To request a presentation or start the onboarding process, email fred@graitlaw.com
+
+## Platforms Grait Law Works With
+
+Client Intake: Lawmatics, LawDroid, Gideon, Clio Grow
+Legal Research: CoCounsel (Casetext), Lexis+ AI, Westlaw Precision
+Document Drafting: Clio Draft, Spellbook, Harvey
+Court Filing: CourtDrive, Clearbrief, InfoTrack
+Billing & Monitoring: Smokeball, Ping, Ironclad, Trellis
