@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Grait Law</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async></script>
+
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cyan: #00D4FF;
+      --blue: #1A6EFF;
+      --navy-900: #04091A;
+      --navy-800: #060E22;
+      --navy-700: #0A1628;
+      --navy-600: #0F1E38;
+    }
+    html, body { height: 100%; }
+    body {
+      background: var(--navy-900);
+      color: #E8F0FF;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .font-space    { font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── Circuit grid bg ── */
+    body {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cdefs%3E%3Cpattern id='g' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Cpath d='M80 0L0 0 0 80' fill='none' stroke='rgba(0,212,255,0.04)' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='80' height='80' fill='url(%23g)'/%3E%3Ccircle cx='40' cy='40' r='1.2' fill='rgba(0,212,255,0.1)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Screen system ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #04091A; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 3px; }
+
+    /* ════════════════════════════════
+       SCREEN 1 — LOGIN
+    ════════════════════════════════ */
+    #screen-login {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(135deg, rgba(15,30,56,0.85) 0%, rgba(10,22,40,0.9) 100%);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 20px;
+      padding: 44px 40px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,212,255,0.06);
+    }
+    .login-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .login-logo img { height: 52px; width: auto; margin-bottom: 16px; }
+    .login-logo h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #E8F0FF;
+    }
+    .login-logo .sub {
+      font-size: 0.75rem;
+      color: rgba(0,212,255,0.6);
+      letter-spacing: 0.12em;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-top: 4px;
+    }
+    .glow-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4), transparent);
+      margin: 24px 0;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0,212,255,0.7);
+      margin-bottom: 8px;
+    }
+    .input-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .admin-input {
+      width: 100%;
+      background: rgba(4,9,26,0.7);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 8px;
+      color: #E8F0FF;
+      font-size: 0.9375rem;
+      font-family: 'Inter', sans-serif;
+      padding: 12px 44px 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .admin-input:focus {
+      border-color: rgba(0,212,255,0.4);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.06);
+    }
+    .admin-input::placeholder { color: rgba(200,216,240,0.3); }
+    .eye-btn {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: rgba(200,216,240,0.35);
+      cursor: pointer; padding: 4px;
+      transition: color 0.2s;
+    }
+    .eye-btn:hover { color: rgba(0,212,255,0.7); }
+    .error-msg {
+      font-size: 0.8rem;
+      color: #FF6B6B;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-top: 6px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #00D4FF 0%, #1A6EFF 100%);
+      color: #04091A;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 24px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,212,255,0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ════════════════════════════════
+       SCREEN 2 — CONNECT
+    ════════════════════════════════ */
+    #screen-connect {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .connect-card {
+      width: 100%;
+      max-width: 460px;
+      background: linear-gradient(135deg, rgba(15,30,56,0.85), rgba(10,22,40,0.9));
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 20px;
+      padding: 44px 40px;
+      backdrop-filter: blur(16px);
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,212,255,0.06);
+    }
+    .connect-card img { height: 48px; width: auto; margin-bottom: 20px; }
+    .connect-card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      color: #E8F0FF;
+      margin-bottom: 10px;
+    }
+    .connect-card p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.875rem;
+      color: rgba(200,216,240,0.55);
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+    .setup-warning {
+      background: rgba(255,165,0,0.08);
+      border: 1px solid rgba(255,165,0,0.25);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.8rem;
+      font-family: 'Space Grotesk', sans-serif;
+      color: rgba(255,200,80,0.9);
+      text-align: left;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.6;
+    }
+    .setup-warning.show { display: block; }
+    .btn-google {
+      width: 100%;
+      background: rgba(15,30,56,0.8);
+      border: 1px solid rgba(0,212,255,0.25);
+      border-radius: 8px;
+      color: #E8F0FF;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 13px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      margin-bottom: 12px;
+    }
+    .btn-google:hover {
+      background: rgba(0,212,255,0.08);
+      border-color: var(--cyan);
+      transform: translateY(-1px);
+    }
+    .btn-back {
+      background: none; border: none;
+      color: rgba(200,216,240,0.4);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 6px;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: rgba(0,212,255,0.7); }
+
+    /* ════════════════════════════════
+       SCREEN 3 — DASHBOARD
+    ════════════════════════════════ */
+    #screen-dashboard {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .admin-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(4,9,26,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0,212,255,0.08);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .header-left img { height: 32px; width: auto; }
+    .header-title { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.14em; }
+    .header-sub { font-size: 0.75rem; color: rgba(232,240,255,0.4); font-family: 'Space Grotesk', sans-serif; margin-top: 2px; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .live-badge {
+      display: flex; align-items: center; gap: 7px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      color: rgba(232,240,255,0.55);
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.12);
+      border-radius: 20px;
+      padding: 5px 12px;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; box-shadow: 0 0 8px var(--cyan); }
+      50% { opacity:0.5; box-shadow: 0 0 16px var(--cyan); }
+    }
+    .btn-sm {
+      background: transparent;
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 6px;
+      color: rgba(200,216,240,0.6);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.775rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .btn-sm:hover {
+      border-color: rgba(0,212,255,0.45);
+      color: var(--cyan);
+      background: rgba(0,212,255,0.06);
+    }
+
+    /* Dashboard body */
+    .dash-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+
+    /* Stat cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 500px) { .stat-grid { grid-template-columns: 1fr; } }
+    .stat-card {
+      background: linear-gradient(135deg, rgba(15,30,56,0.7), rgba(10,22,40,0.8));
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(0,212,255,0.22); transform: translateY(-2px); }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4), transparent);
+    }
+    .stat-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0,212,255,0.65);
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00D4FF, #1A6EFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      min-height: 2rem;
+    }
+    .stat-sub {
+      font-size: 0.75rem;
+      color: rgba(200,216,240,0.4);
+      font-family: 'Space Grotesk', sans-serif;
+      margin-top: 6px;
+    }
+    .skeleton {
+      background: linear-gradient(90deg, rgba(0,212,255,0.06) 25%, rgba(0,212,255,0.12) 50%, rgba(0,212,255,0.06) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* Chart card */
+    .chart-card {
+      background: linear-gradient(135deg, rgba(15,30,56,0.7), rgba(10,22,40,0.8));
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .chart-header h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: #E8F0FF;
+    }
+    .tab-group {
+      display: flex;
+      gap: 4px;
+      background: rgba(4,9,26,0.5);
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .tab-btn {
+      background: none; border: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: rgba(200,216,240,0.45);
+      padding: 5px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(0,212,255,0.18), rgba(26,110,255,0.18));
+      color: var(--cyan);
+    }
+    .chart-wrap { height: 220px; position: relative; }
+
+    /* Bottom data grid */
+    .data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 700px) { .data-grid { grid-template-columns: 1fr; } }
+    .data-card {
+      background: linear-gradient(135deg, rgba(15,30,56,0.7), rgba(10,22,40,0.8));
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .data-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #E8F0FF;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .data-card h3::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: rgba(0,212,255,0.08);
+    }
+    .location-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,212,255,0.05);
+      font-size: 0.83rem;
+    }
+    .location-row:last-child { border-bottom: none; }
+    .location-flag { font-size: 1.1rem; flex-shrink: 0; width: 24px; text-align: center; }
+    .location-name {
+      flex: 1;
+      font-family: 'Space Grotesk', sans-serif;
+      color: rgba(232,240,255,0.75);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .location-bar-wrap {
+      width: 60px;
+      height: 4px;
+      background: rgba(0,212,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .location-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #00D4FF, #1A6EFF);
+      border-radius: 2px;
+    }
+    .location-count {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: var(--cyan);
+      flex-shrink: 0;
+      min-width: 28px;
+      text-align: right;
+    }
+    .no-data {
+      text-align: center;
+      padding: 32px 0;
+      color: rgba(200,216,240,0.3);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+    }
+
+    /* Error banner */
+    .error-banner {
+      background: rgba(255,80,80,0.08);
+      border: 1px solid rgba(255,80,80,0.25);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      font-family: 'Space Grotesk', sans-serif;
+      color: rgba(255,140,140,0.9);
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-banner.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════
+       SCREEN 1 — LOGIN
+  ════════════════════════════════ -->
+  <div id="screen-login" class="screen active">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="brand_assets/Grait Law Logo.png" alt="Grait Law" />
+        <h1>ADMIN PORTAL</h1>
+        <div class="sub">graitlaw.com</div>
+      </div>
+
+      <div class="glow-line"></div>
+
+      <label class="form-label" for="password-input">Password</label>
+      <div class="input-wrap">
+        <input
+          type="password"
+          id="password-input"
+          class="admin-input"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')checkPassword()"
+        />
+        <button class="eye-btn" id="eye-btn" onclick="toggleEye()" aria-label="Show password" type="button">
+          <svg id="eye-icon-show" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="eye-icon-hide" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+      <div class="error-msg" id="login-error">Incorrect password. Please try again.</div>
+
+      <button class="btn-primary" onclick="checkPassword()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Enter Admin Portal
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       SCREEN 2 — CONNECT ANALYTICS
+  ════════════════════════════════ -->
+  <div id="screen-connect" class="screen">
+    <div class="connect-card">
+      <img src="brand_assets/Grait Law Logo.png" alt="Grait Law" />
+      <h2>CONNECT ANALYTICS</h2>
+      <p>Sign in with the Google account that owns your GA4 property to load your dashboard data.</p>
+
+      <div class="setup-warning" id="setup-warning"></div>
+
+      <button class="btn-google" onclick="requestGoogleAccess()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Sign in with Google
+      </button>
+
+      <button class="btn-back" onclick="backToLogin()">← Back to login</button>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       SCREEN 3 — DASHBOARD
+  ════════════════════════════════ -->
+  <div id="screen-dashboard" class="screen" style="flex-direction:column;">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="header-left">
+        <img src="brand_assets/Grait Law Logo.png" alt="Grait Law" />
+        <div>
+          <div class="header-title">ADMIN DASHBOARD</div>
+          <div class="header-sub">graitlaw.com &nbsp;·&nbsp; Updated <span id="last-updated">—</span></div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          <span id="active-now">—</span>&nbsp;active now
+        </div>
+        <button class="btn-sm" onclick="refreshDashboard()">↻ Refresh</button>
+        <button class="btn-sm" onclick="signOut()">Sign out</button>
+      </div>
+    </header>
+
+    <!-- Dashboard body -->
+    <div class="dash-body">
+      <div class="error-banner" id="api-error"></div>
+
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Today</div>
+          <div class="stat-value" id="stat-today"><div class="skeleton" style="height:2rem;width:60px;"></div></div>
+          <div class="stat-sub">visitors</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Last 7 Days</div>
+          <div class="stat-value" id="stat-7d"><div class="skeleton" style="height:2rem;width:60px;"></div></div>
+          <div class="stat-sub">visitors</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Last 30 Days</div>
+          <div class="stat-value" id="stat-30d"><div class="skeleton" style="height:2rem;width:60px;"></div></div>
+          <div class="stat-sub">visitors</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">This Year</div>
+          <div class="stat-value" id="stat-year"><div class="skeleton" style="height:2rem;width:60px;"></div></div>
+          <div class="stat-sub">visitors</div>
+        </div>
+      </div>
+
+      <!-- Trend chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Visitor Trend</h3>
+          <div class="tab-group">
+            <button class="tab-btn active" onclick="setRange(7, this)">7D</button>
+            <button class="tab-btn" onclick="setRange(30, this)">30D</button>
+            <button class="tab-btn" onclick="setRange(90, this)">90D</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trend-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Location tables -->
+      <div class="data-grid">
+        <div class="data-card">
+          <h3>Top Countries</h3>
+          <div id="countries-list"><div class="no-data">Loading…</div></div>
+        </div>
+        <div class="data-card">
+          <h3>Top Cities</h3>
+          <div id="cities-list"><div class="no-data">Loading…</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    /* ═══════════════════════════════════════════
+       CONFIG — fill these in after Google Cloud setup
+       See setup instructions below the script.
+    ═══════════════════════════════════════════ */
+    const GA4_PROPERTY_ID  = 'REPLACE_WITH_PROPERTY_ID';         // numeric, e.g. '312345678'
+    const GOOGLE_CLIENT_ID = 'REPLACE_WITH_OAUTH_CLIENT_ID';     // e.g. '123-abc.apps.googleusercontent.com'
+    const ADMIN_PASSWORD   = 'GraitAdmin2026!';                  // ← change this
+
+    /* ═══════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════ */
+    let accessToken   = null;
+    let tokenClient   = null;
+    let trendChart    = null;
+    let currentRange  = 7;
+
+    /* ═══════════════════════════════════════════
+       SCREEN MANAGEMENT
+    ═══════════════════════════════════════════ */
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    /* ═══════════════════════════════════════════
+       LOGIN
+    ═══════════════════════════════════════════ */
+    function checkPassword() {
+      const input = document.getElementById('password-input').value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById('login-error').classList.remove('show');
+        sessionStorage.setItem('gl_admin', '1');
+        checkConfig();
+        showScreen('screen-connect');
+      } else {
+        const err = document.getElementById('login-error');
+        err.classList.add('show');
+        document.getElementById('password-input').value = '';
+        document.getElementById('password-input').focus();
+        setTimeout(() => err.classList.remove('show'), 3000);
+      }
+    }
+
+    function toggleEye() {
+      const input = document.getElementById('password-input');
+      const show  = document.getElementById('eye-icon-show');
+      const hide  = document.getElementById('eye-icon-hide');
+      if (input.type === 'password') {
+        input.type = 'text';
+        show.style.display = 'none';
+        hide.style.display = 'block';
+      } else {
+        input.type = 'password';
+        show.style.display = 'block';
+        hide.style.display = 'none';
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       CONFIG CHECK
+    ═══════════════════════════════════════════ */
+    function checkConfig() {
+      const warn = document.getElementById('setup-warning');
+      const issues = [];
+      if (!GA4_PROPERTY_ID || GA4_PROPERTY_ID.includes('REPLACE'))
+        issues.push('GA4 Property ID not set (see config in admin.html)');
+      if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('REPLACE'))
+        issues.push('Google OAuth Client ID not set (see setup instructions)');
+      if (issues.length) {
+        warn.innerHTML = '⚠️ Setup incomplete:<br>• ' + issues.join('<br>• ');
+        warn.classList.add('show');
+      } else {
+        warn.classList.remove('show');
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       GOOGLE IDENTITY SERVICES — OAuth
+    ═══════════════════════════════════════════ */
+    function initGIS() {
+      if (!window.google || GOOGLE_CLIENT_ID.includes('REPLACE')) return;
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/analytics.readonly',
+        callback: handleToken,
+      });
+    }
+
+    function requestGoogleAccess() {
+      if (!tokenClient) {
+        showApiError('Google OAuth not configured. Please complete setup first.');
+        return;
+      }
+      tokenClient.requestAccessToken();
+    }
+
+    async function handleToken(response) {
+      if (response.error) {
+        showApiError('Google sign-in failed: ' + response.error);
+        return;
+      }
+      accessToken = response.access_token;
+      showScreen('screen-dashboard');
+      await loadDashboard();
+    }
+
+    function backToLogin() {
+      sessionStorage.removeItem('gl_admin');
+      showScreen('screen-login');
+    }
+
+    function signOut() {
+      accessToken = null;
+      sessionStorage.removeItem('gl_admin');
+      if (trendChart) { trendChart.destroy(); trendChart = null; }
+      showScreen('screen-login');
+      document.getElementById('password-input').value = '';
+    }
+
+    /* ═══════════════════════════════════════════
+       GA4 DATA API
+    ═══════════════════════════════════════════ */
+    async function ga4Report(body) {
+      const url = `https://analyticsdata.googleapis.com/v1beta/properties/${GA4_PROPERTY_ID}:runReport`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'GA4 API error');
+      }
+      return res.json();
+    }
+
+    async function ga4Realtime() {
+      const url = `https://analyticsdata.googleapis.com/v1beta/properties/${GA4_PROPERTY_ID}:runRealtimeReport`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ metrics: [{ name: 'activeUsers' }] }),
+      });
+      if (!res.ok) return null;
+      return res.json();
+    }
+
+    /* ═══════════════════════════════════════════
+       DASHBOARD LOAD
+    ═══════════════════════════════════════════ */
+    async function loadDashboard() {
+      hideApiError();
+      try {
+        const [summary, trend, countries, cities, realtime] = await Promise.all([
+          fetchSummary(),
+          fetchTrend(currentRange),
+          fetchLocations('country'),
+          fetchLocations('city'),
+          ga4Realtime(),
+        ]);
+
+        renderSummary(summary);
+        renderTrend(trend);
+        renderLocationList('countries-list', countries);
+        renderLocationList('cities-list', cities);
+
+        const activeNow = realtime?.rows?.[0]?.metricValues?.[0]?.value ?? '0';
+        document.getElementById('active-now').textContent = activeNow;
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+
+      } catch (err) {
+        showApiError(err.message);
+      }
+    }
+
+    async function refreshDashboard() {
+      const btn = document.querySelector('[onclick="refreshDashboard()"]');
+      if (btn) { btn.textContent = '↻ Refreshing…'; btn.disabled = true; }
+      await loadDashboard();
+      if (btn) { btn.textContent = '↻ Refresh'; btn.disabled = false; }
+    }
+
+    /* ── Summary metrics ── */
+    async function fetchSummary() {
+      return ga4Report({
+        dateRanges: [
+          { startDate: 'today',      endDate: 'today',      name: 'today' },
+          { startDate: '7daysAgo',   endDate: 'today',      name: '7d'    },
+          { startDate: '30daysAgo',  endDate: 'today',      name: '30d'   },
+          { startDate: '365daysAgo', endDate: 'today',      name: 'year'  },
+        ],
+        metrics: [{ name: 'activeUsers' }],
+      });
+    }
+
+    function renderSummary(data) {
+      const map = {};
+      (data.rows || []).forEach(row => {
+        const rangeName = row.dimensionValues?.[0]?.value ?? row.metricValues?.[0]?.value;
+        // Data API returns date range name in dimensionValues when multiple ranges used
+      });
+
+      // When multiple dateRanges are used, each row has dimensionValues[0] = date_range name
+      // But with no other dimensions, rows are indexed by date_range
+      const byRange = {};
+      if (data.rows) {
+        data.rows.forEach(row => {
+          const name = row.dimensionValues?.[0]?.value;
+          byRange[name] = row.metricValues?.[0]?.value ?? '0';
+        });
+      }
+
+      const get = key => {
+        if (byRange[key] !== undefined) return fmt(byRange[key]);
+        // fallback: if no rows (no traffic yet), show 0
+        return '0';
+      };
+
+      document.getElementById('stat-today').textContent = get('today');
+      document.getElementById('stat-7d').textContent    = get('7d');
+      document.getElementById('stat-30d').textContent   = get('30d');
+      document.getElementById('stat-year').textContent  = get('year');
+    }
+
+    /* ── Trend chart ── */
+    async function fetchTrend(days) {
+      return ga4Report({
+        dateRanges: [{ startDate: `${days}daysAgo`, endDate: 'today' }],
+        dimensions: [{ name: 'date' }],
+        metrics:    [{ name: 'activeUsers' }],
+        orderBys:   [{ dimension: { dimensionName: 'date' } }],
+        limit: days + 1,
+      });
+    }
+
+    function renderTrend(data) {
+      const rows    = data.rows || [];
+      const labels  = rows.map(r => {
+        const d = r.dimensionValues[0].value; // YYYYMMDD
+        return `${d.slice(4,6)}/${d.slice(6,8)}`;
+      });
+      const values  = rows.map(r => parseInt(r.metricValues[0].value, 10));
+
+      if (trendChart) trendChart.destroy();
+
+      const ctx = document.getElementById('trend-chart').getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 220);
+      grad.addColorStop(0,   'rgba(0,212,255,0.18)');
+      grad.addColorStop(1,   'rgba(0,212,255,0)');
+
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            borderColor: '#00D4FF',
+            backgroundColor: grad,
+            fill: true,
+            tension: 0.45,
+            borderWidth: 2,
+            pointRadius: values.length > 30 ? 0 : 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: '#00D4FF',
+            pointBorderColor: '#04091A',
+            pointBorderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(10,22,40,0.95)',
+              borderColor: 'rgba(0,212,255,0.2)',
+              borderWidth: 1,
+              titleColor: '#00D4FF',
+              bodyColor: '#E8F0FF',
+              padding: 10,
+              callbacks: {
+                title: items => items[0].label,
+                label: item => ` ${item.raw} visitor${item.raw !== 1 ? 's' : ''}`,
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid:  { color: 'rgba(0,212,255,0.05)', drawBorder: false },
+              ticks: { color: 'rgba(232,240,255,0.35)', font: { family: 'Inter', size: 11 }, maxTicksLimit: 10 },
+              border: { display: false },
+            },
+            y: {
+              grid:       { color: 'rgba(0,212,255,0.05)', drawBorder: false },
+              ticks:      { color: 'rgba(232,240,255,0.35)', font: { family: 'Inter', size: 11 }, precision: 0 },
+              border:     { display: false },
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+    }
+
+    async function setRange(days, btn) {
+      currentRange = days;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      try {
+        const data = await fetchTrend(days);
+        renderTrend(data);
+      } catch (err) {
+        showApiError(err.message);
+      }
+    }
+
+    /* ── Location data ── */
+    async function fetchLocations(dimension) {
+      return ga4Report({
+        dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+        dimensions: [{ name: dimension }],
+        metrics:    [{ name: 'activeUsers' }],
+        orderBys:   [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 10,
+      });
+    }
+
+    function renderLocationList(containerId, data) {
+      const container = document.getElementById(containerId);
+      const rows = data.rows || [];
+      if (!rows.length) {
+        container.innerHTML = '<div class="no-data">No data yet — visits will appear here once traffic arrives.</div>';
+        return;
+      }
+      const max = parseInt(rows[0].metricValues[0].value, 10);
+      container.innerHTML = rows.map(row => {
+        const name  = row.dimensionValues[0].value;
+        const count = parseInt(row.metricValues[0].value, 10);
+        const pct   = Math.round((count / max) * 100);
+        const flag  = containerId === 'countries-list' ? countryFlag(name) : '📍';
+        return `
+          <div class="location-row">
+            <span class="location-flag">${flag}</span>
+            <span class="location-name">${name}</span>
+            <div class="location-bar-wrap"><div class="location-bar" style="width:${pct}%"></div></div>
+            <span class="location-count">${fmt(count)}</span>
+          </div>`;
+      }).join('');
+    }
+
+    /* ── Helpers ── */
+    function countryFlag(name) {
+      // Map common country names to 2-letter ISO codes
+      const codes = {
+        'United States':'US','United Kingdom':'GB','Canada':'CA','Australia':'AU',
+        'Germany':'DE','France':'FR','India':'IN','Brazil':'BR','Mexico':'MX',
+        'Spain':'ES','Italy':'IT','Netherlands':'NL','Japan':'JP','China':'CN',
+        'South Korea':'KR','Russia':'RU','Sweden':'SE','Norway':'NO','Denmark':'DK',
+        'Poland':'PL','Argentina':'AR','Colombia':'CO','Chile':'CL','Portugal':'PT',
+        'Switzerland':'CH','Belgium':'BE','Austria':'AT','Ireland':'IE','New Zealand':'NZ',
+        'Singapore':'SG','South Africa':'ZA','Nigeria':'NG','Kenya':'KE','Egypt':'EG',
+        'United Arab Emirates':'AE','Israel':'IL','Turkey':'TR','Pakistan':'PK',
+        'Philippines':'PH','Indonesia':'ID','Thailand':'TH','Vietnam':'VN','Malaysia':'MY',
+      };
+      const code = codes[name];
+      if (!code) return '🌐';
+      return code.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
+    }
+
+    function fmt(n) {
+      const num = parseInt(n, 10);
+      if (isNaN(num)) return '0';
+      if (num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+      if (num >= 1000)    return (num/1000).toFixed(1) + 'K';
+      return num.toLocaleString();
+    }
+
+    function showApiError(msg) {
+      const el = document.getElementById('api-error');
+      el.textContent = '⚠️ ' + msg;
+      el.classList.add('show');
+    }
+    function hideApiError() {
+      document.getElementById('api-error').classList.remove('show');
+    }
+
+    /* ═══════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════ */
+    window.addEventListener('load', () => {
+      // If coming back to page after OAuth redirect, skip to connect screen
+      if (sessionStorage.getItem('gl_admin') === '1') {
+        checkConfig();
+        showScreen('screen-connect');
+      }
+      // Init GIS once the library loads
+      if (window.google) {
+        initGIS();
+      } else {
+        document.querySelector('[src*="accounts.google.com"]')?.addEventListener('load', initGIS);
+        // Fallback poll in case the load event already fired
+        setTimeout(() => { if (window.google && !tokenClient) initGIS(); }, 2000);
+      }
+    });
+  </script>
+
+</body>
+</html>

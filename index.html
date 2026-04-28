@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-471HFCZ123"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-471HFCZ123');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -1497,6 +1505,20 @@
     </div>
   </footer>
 
+
+  <!-- Hidden admin link — bottom-left -->
+  <a href="admin.html" id="admin-portal-link" aria-label="Admin portal" title="Admin">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  </a>
+  <style>
+    #admin-portal-link {
+      position: fixed; bottom: 22px; left: 24px; z-index: 998;
+      color: rgba(0,212,255,0.18); text-decoration: none;
+      transition: color 0.3s, transform 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #admin-portal-link:hover { color: rgba(0,212,255,0.7); transform: scale(1.15); }
+  </style>
 
   <!-- ══════════════════════════════════════════
        CHATBOT
