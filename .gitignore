@@ -14,4 +14,4 @@ npm-debug.log*
 .vscode/settings.json
 *.swp
 *.swo
-.claude/settings.local.json
+.claude/
