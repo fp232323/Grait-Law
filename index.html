@@ -266,16 +266,16 @@
       overflow-x: hidden;
     }
 
-    /* ── Circuit board background ── */
-    .circuit-bg {
-      background-color: var(--navy-900);
-      background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cdefs%3E%3Cpattern id='grid' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 100 0 L 0 0 0 100' fill='none' stroke='rgba(0,212,255,0.04)' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23grid)'/%3E%3Ccircle cx='50' cy='50' r='1.5' fill='rgba(0,212,255,0.12)'/%3E%3Ccircle cx='0' cy='0' r='1.5' fill='rgba(0,212,255,0.08)'/%3E%3Ccircle cx='100' cy='100' r='1.5' fill='rgba(0,212,255,0.08)'/%3E%3Cpath d='M50 50 H100' fill='none' stroke='rgba(0,212,255,0.05)' stroke-width='0.5'/%3E%3Cpath d='M50 50 V100' fill='none' stroke='rgba(0,212,255,0.05)' stroke-width='0.5'/%3E%3C/svg%3E");
-    }
-
-    .circuit-bg-dense {
-      background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cdefs%3E%3Cpattern id='grid2' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='rgba(0,212,255,0.06)' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='60' height='60' fill='url(%23grid2)'/%3E%3Ccircle cx='30' cy='30' r='1.2' fill='rgba(0,212,255,0.15)'/%3E%3Ccircle cx='0' cy='0' r='0.8' fill='rgba(0,212,255,0.1)'/%3E%3C/svg%3E");
+    /* ── Circuit board canvas background ── */
+    html, body { background: #04091A; }
+    .circuit-bg, .circuit-bg-dense { background: none; }
+    #circuit-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
 
     /* ── Glow effects ── */
@@ -373,6 +373,9 @@
     .btn-outline:active { transform: translateY(0); }
 
     /* ── Nav ── */
+    main { position: relative; z-index: 1; }
+    footer { position: relative; z-index: 1; }
+
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -700,6 +703,62 @@
       opacity: 0.8;
     }
 
+    /* ── Intake form fields ── */
+    .intake-field {
+      background: rgba(4,9,26,0.6);
+      border: 1px solid rgba(0,212,255,0.12);
+      border-radius: 8px;
+      color: #E8F0FF;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .intake-field::placeholder { color: rgba(200,216,240,0.3); }
+    .intake-field:focus {
+      border-color: rgba(0,212,255,0.45);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.07);
+    }
+    .intake-field:invalid:not(:placeholder-shown) {
+      border-color: rgba(255,80,80,0.4);
+    }
+    select.intake-field {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='rgba(0,212,255,0.5)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    select.intake-field option { background: #0A1628; color: #E8F0FF; }
+
+    /* ── Tier radio buttons ── */
+    .tier-radio-label { cursor: pointer; }
+    .tier-radio-box {
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: rgba(4,9,26,0.5);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      text-align: center;
+    }
+    .tier-radio-label:hover .tier-radio-box {
+      border-color: rgba(0,212,255,0.35);
+      background: rgba(0,212,255,0.05);
+    }
+    .tier-radio-label input:checked + .tier-radio-box {
+      border-color: rgba(0,212,255,0.6);
+      background: rgba(0,212,255,0.1);
+      box-shadow: 0 0 16px rgba(0,212,255,0.1);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin { animation: spin 0.8s linear infinite; }
+
     @media (max-width: 768px) {
       #chatbot-window { width: calc(100vw - 48px); }
       .stat-num { font-size: 2rem; }
@@ -708,6 +767,8 @@
 </head>
 <body class="circuit-bg">
 
+  <canvas id="circuit-canvas" aria-hidden="true"></canvas>
+
   <!-- ══════════════════════════════════════════
        NAVIGATION
   ══════════════════════════════════════════ -->
@@ -715,7 +776,7 @@
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <!-- Logo -->
       <a href="#" class="flex items-center gap-3 flex-shrink-0">
-        <img src="brand_assets/Grait Law Logo.png" alt="Grait Law" class="h-10 w-auto" />
+        <img src="brand_assets/Grait Law Logo.png" alt="Grait Law" class="w-auto" style="height:52px;" />
       </a>
 
       <!-- Desktop nav links -->
@@ -724,12 +785,12 @@
         <a href="#process" class="nav-link">Process</a>
         <a href="#pricing" class="nav-link">Pricing</a>
         <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#contact" class="nav-link">Contact</a>
+        <a href="#intake" class="nav-link">Contact</a>
       </div>
 
       <!-- CTA -->
       <div class="hidden md:flex items-center gap-4">
-        <a href="mailto:fred@graitlaw.com" class="btn-cyan text-sm py-2.5 px-6">Request a Demo</a>
+        <a href="#intake" class="btn-cyan text-sm py-2.5 px-6">Get Started</a>
       </div>
 
       <!-- Mobile hamburger -->
@@ -748,7 +809,7 @@
         <a href="#pricing" class="nav-link text-base" onclick="closeMobileMenu()">Pricing</a>
         <a href="#faq" class="nav-link text-base" onclick="closeMobileMenu()">FAQ</a>
         <a href="#contact" class="nav-link text-base" onclick="closeMobileMenu()">Contact</a>
-        <a href="mailto:fred@graitlaw.com" class="btn-cyan text-center">Request a Demo</a>
+        <a href="#intake" class="btn-cyan text-center" onclick="closeMobileMenu()">Get Started</a>
       </div>
     </div>
   </nav>
@@ -822,7 +883,7 @@
   <!-- ══════════════════════════════════════════
        VALUE PROPOSITION
   ══════════════════════════════════════════ -->
-  <section aria-labelledby="value-heading" class="relative py-20" style="background:linear-gradient(180deg, #04091A 0%, #060E22 100%);">
+  <section aria-labelledby="value-heading" class="relative py-20" style="background:linear-gradient(180deg, rgba(4,9,26,0.88) 0%, rgba(6,14,34,0.88) 100%);">
     <div class="max-w-7xl mx-auto px-6">
       <div class="glow-line mb-16"></div>
       <div class="text-center mb-12 reveal">
@@ -866,7 +927,7 @@
   <!-- ══════════════════════════════════════════
        SERVICES — 5 STAGES
   ══════════════════════════════════════════ -->
-  <section id="services" aria-labelledby="services-heading" class="relative py-24 circuit-bg-dense" style="background-color:#060E22;">
+  <section id="services" aria-labelledby="services-heading" class="relative py-24 circuit-bg-dense" style="background-color:rgba(6,14,34,0.88);">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16 reveal">
         <div class="section-label mb-3">End-to-End AI Integration</div>
@@ -1135,7 +1196,7 @@
   <!-- ══════════════════════════════════════════
        HOW IT WORKS
   ══════════════════════════════════════════ -->
-  <section id="process" aria-labelledby="process-heading" class="relative py-24" style="background:linear-gradient(180deg,#060E22 0%,#04091A 100%);">
+  <section id="process" aria-labelledby="process-heading" class="relative py-24" style="background:linear-gradient(180deg,rgba(6,14,34,0.88) 0%,rgba(4,9,26,0.88) 100%);">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16 reveal">
         <div class="section-label mb-3">Our Process</div>
@@ -1182,7 +1243,7 @@
   <!-- ══════════════════════════════════════════
        PRICING
   ══════════════════════════════════════════ -->
-  <section id="pricing" aria-labelledby="pricing-heading" class="relative py-24 circuit-bg-dense" style="background-color:#060E22;">
+  <section id="pricing" aria-labelledby="pricing-heading" class="relative py-24 circuit-bg-dense" style="background-color:rgba(6,14,34,0.88);">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-4 reveal">
         <div class="section-label mb-3">Transparent MSP Pricing</div>
@@ -1349,7 +1410,7 @@
   <!-- ══════════════════════════════════════════
        FAQ
   ══════════════════════════════════════════ -->
-  <section id="faq" aria-labelledby="faq-heading" class="relative py-24" style="background:linear-gradient(180deg,#04091A 0%,#060E22 100%);">
+  <section id="faq" aria-labelledby="faq-heading" class="relative py-24" style="background:linear-gradient(180deg,rgba(4,9,26,0.88) 0%,rgba(6,14,34,0.88) 100%);">
     <div class="max-w-4xl mx-auto px-6">
       <div class="text-center mb-14 reveal">
         <div class="section-label mb-3">Common Questions</div>
@@ -1426,53 +1487,150 @@
 
 
   <!-- ══════════════════════════════════════════
-       CONTACT / CTA
+       CLIENT INTAKE FORM
   ══════════════════════════════════════════ -->
-  <section id="contact" aria-labelledby="contact-heading" class="relative py-28 overflow-hidden circuit-bg-dense" style="background-color:#04091A;">
-    <!-- Glow blob center -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div style="width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,212,255,0.07) 0%,transparent 70%);border-radius:50%;"></div>
-    </div>
-
-    <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
-      <div class="reveal">
-        <div class="section-label mb-4">Ready to Transform Your Practice?</div>
-        <h2 id="contact-heading" class="font-orbitron font-black text-white mb-6" style="font-size:clamp(2rem,4.5vw,3.5rem);letter-spacing:-0.02em;line-height:1.1;">
-          Let's Build Your<br/><span class="text-gradient-cyan">AI-Powered Law Firm</span>
+  <section id="intake" aria-labelledby="intake-heading" class="relative py-24" style="background:linear-gradient(180deg,rgba(6,14,34,0.88) 0%,rgba(4,9,26,0.88) 100%);">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <div class="section-label mb-3">Get Started</div>
+        <h2 id="intake-heading" class="font-orbitron font-bold text-white text-3xl md:text-4xl" style="letter-spacing:-0.02em;">
+          Start Your <span class="text-gradient-cyan">AI Transformation</span>
         </h2>
-        <p class="font-space text-white/55 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-          Request a personalized presentation. We'll audit your current workflow, identify your biggest opportunities,
-          and show you exactly which AI tools will move the needle for your practice.
+        <p class="font-space text-white/55 mt-4 max-w-xl mx-auto text-base leading-relaxed">
+          Fill out the form below, and we'll reach out within 48 hours to schedule your free workflow audit. This audit will identify your biggest opportunities and allow a determination of which AI tools will move the needle for your practice.
         </p>
+      </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <a href="mailto:fred@graitlaw.com?subject=Presentation Request" class="btn-cyan text-base px-10 py-4">
-            Request a Presentation
-          </a>
-          <a href="mailto:fred@graitlaw.com" class="btn-outline text-base px-10 py-4">
-            fred@graitlaw.com
-          </a>
+      <div class="glass-card rounded-2xl p-8 md:p-10 reveal">
+        <!-- Success state -->
+        <div id="form-success" class="hidden text-center py-10">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5" style="background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(26,110,255,0.2));border:1px solid rgba(0,212,255,0.3);box-shadow:0 0 30px rgba(0,212,255,0.15);">
+            <svg width="28" height="28" fill="none" stroke="#00D4FF" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <h3 class="font-orbitron font-bold text-white text-xl mb-2">Message Received</h3>
+          <p class="font-space text-white/55 text-sm leading-relaxed max-w-sm mx-auto">Thank you — we'll be in touch within 48 hours to schedule your free workflow audit.</p>
         </div>
 
-        <div class="glass-card rounded-2xl p-8 max-w-2xl mx-auto">
-          <div class="grid grid-cols-3 gap-6 text-center">
+        <!-- Error state -->
+        <div id="form-error" class="hidden mb-6 px-4 py-3 rounded-lg text-sm font-space" style="background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);color:rgba(255,140,140,0.9);">
+          Something went wrong. Please email us directly at <a href="mailto:fred@graitlaw.com" style="color:#00D4FF;text-decoration:underline;">fred@graitlaw.com</a>.
+        </div>
+
+        <form id="intake-form" novalidate>
+          <!-- Honeypot spam trap -->
+          <input type="text" name="_gotcha" style="display:none;" tabindex="-1" autocomplete="off" />
+          <input type="hidden" name="_subject" value="New Client Intake — Grait Law Website" />
+
+          <div class="grid sm:grid-cols-2 gap-5 mb-5">
+            <!-- Full Name -->
             <div>
-              <div class="font-orbitron font-bold text-2xl text-gradient-cyan mb-1">Free</div>
-              <div class="text-white/45 text-xs font-space uppercase tracking-wider">Initial Audit</div>
+              <label for="intake-name" class="block font-space font-medium text-white/70 text-sm mb-2">Full Name <span style="color:#00D4FF;">*</span></label>
+              <input type="text" id="intake-name" name="name" required autocomplete="name"
+                placeholder="Jane Smith"
+                class="intake-field w-full" />
             </div>
-            <div class="border-x border-white/8">
-              <div class="font-orbitron font-bold text-2xl text-gradient-cyan mb-1">48hr</div>
-              <div class="text-white/45 text-xs font-space uppercase tracking-wider">Response Time</div>
-            </div>
+            <!-- Firm Name -->
             <div>
-              <div class="font-orbitron font-bold text-2xl text-gradient-cyan mb-1">No</div>
-              <div class="text-white/45 text-xs font-space uppercase tracking-wider">Lock-In Contract</div>
+              <label for="intake-firm" class="block font-space font-medium text-white/70 text-sm mb-2">Law Firm Name</label>
+              <input type="text" id="intake-firm" name="firm_name" autocomplete="organization"
+                placeholder="Smith & Associates LLP"
+                class="intake-field w-full" />
+            </div>
+            <!-- Email -->
+            <div>
+              <label for="intake-email" class="block font-space font-medium text-white/70 text-sm mb-2">Email Address <span style="color:#00D4FF;">*</span></label>
+              <input type="email" id="intake-email" name="email" required autocomplete="email"
+                placeholder="jane@smithlaw.com"
+                class="intake-field w-full" />
+            </div>
+            <!-- Phone -->
+            <div>
+              <label for="intake-phone" class="block font-space font-medium text-white/70 text-sm mb-2">Phone Number</label>
+              <input type="tel" id="intake-phone" name="phone" autocomplete="tel"
+                placeholder="(305) 555-0100"
+                class="intake-field w-full" />
+            </div>
+            <!-- Practice Area -->
+            <div>
+              <label for="intake-practice" class="block font-space font-medium text-white/70 text-sm mb-2">Primary Practice Area</label>
+              <select id="intake-practice" name="practice_area" class="intake-field w-full">
+                <option value="" disabled selected>Select area…</option>
+                <option>Personal Injury</option>
+                <option>Family Law</option>
+                <option>Criminal Defense</option>
+                <option>Business / Corporate</option>
+                <option>Real Estate</option>
+                <option>Immigration</option>
+                <option>Estate Planning / Probate</option>
+                <option>Intellectual Property</option>
+                <option>Employment Law</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <!-- Firm Size -->
+            <div>
+              <label for="intake-size" class="block font-space font-medium text-white/70 text-sm mb-2">Firm Size</label>
+              <select id="intake-size" name="firm_size" class="intake-field w-full">
+                <option value="" disabled selected>Select size…</option>
+                <option>Solo practitioner</option>
+                <option>2–5 attorneys</option>
+                <option>6–20 attorneys</option>
+                <option>21–50 attorneys</option>
+                <option>50+ attorneys</option>
+              </select>
             </div>
           </div>
-        </div>
+
+          <!-- Tier interest -->
+          <div class="mb-5">
+            <label class="block font-space font-medium text-white/70 text-sm mb-3">Which tier are you most interested in?</label>
+            <div class="grid sm:grid-cols-3 gap-3">
+              <label class="tier-radio-label">
+                <input type="radio" name="tier_interest" value="Tier 1 — Intake &amp; Automation ($300/mo)" class="sr-only" />
+                <div class="tier-radio-box">
+                  <div class="font-orbitron text-xs font-bold mb-0.5" style="color:#00D4FF;">Tier 1</div>
+                  <div class="font-space text-white/60 text-xs">Intake &amp; Automation</div>
+                  <div class="font-space text-white/35 text-xs">$300 / month</div>
+                </div>
+              </label>
+              <label class="tier-radio-label">
+                <input type="radio" name="tier_interest" value="Tier 2 — The Core Workflow ($900/mo)" class="sr-only" />
+                <div class="tier-radio-box">
+                  <div class="font-orbitron text-xs font-bold mb-0.5" style="color:#00D4FF;">Tier 2</div>
+                  <div class="font-space text-white/60 text-xs">The Core Workflow</div>
+                  <div class="font-space text-white/35 text-xs">$900 / month</div>
+                </div>
+              </label>
+              <label class="tier-radio-label">
+                <input type="radio" name="tier_interest" value="Tier 3 — Enterprise AI Partner ($2,500/mo)" class="sr-only" />
+                <div class="tier-radio-box">
+                  <div class="font-orbitron text-xs font-bold mb-0.5" style="color:#00D4FF;">Tier 3</div>
+                  <div class="font-space text-white/60 text-xs">Enterprise AI Partner</div>
+                  <div class="font-space text-white/35 text-xs">$2,500 / month</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div class="mb-7">
+            <label for="intake-message" class="block font-space font-medium text-white/70 text-sm mb-2">Tell us about your current workflow challenges</label>
+            <textarea id="intake-message" name="message" rows="4"
+              placeholder="e.g. We spend too many hours on manual intake, research takes days, we miss billable time…"
+              class="intake-field w-full resize-none"></textarea>
+          </div>
+
+          <button type="submit" id="intake-submit" class="btn-cyan w-full text-base py-4 flex items-center justify-center gap-2">
+            <span id="submit-label">Send My Intake Request</span>
+            <svg id="submit-spinner" class="hidden animate-spin" width="18" height="18" fill="none" stroke="#04091A" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </button>
+
+          <p class="text-center text-white/30 text-xs font-space mt-4">Your information is kept strictly confidential and never shared with third parties.</p>
+        </form>
       </div>
     </div>
   </section>
+
 
 
   </main><!-- /#main-content -->
@@ -1495,7 +1653,7 @@
           <a href="#process" class="nav-link">Process</a>
           <a href="#pricing" class="nav-link">Pricing</a>
           <a href="#faq" class="nav-link">FAQ</a>
-          <a href="mailto:fred@graitlaw.com" class="nav-link">Contact</a>
+          <a href="#intake" class="nav-link">Contact</a>
         </div>
         <div class="text-white/30 text-xs font-space text-center md:text-right">
           <div>© 2026 Grait Law. All rights reserved.</div>
@@ -1568,6 +1726,232 @@
        JAVASCRIPT
   ══════════════════════════════════════════ -->
   <script>
+    // ── Circuit board canvas ──
+    (function () {
+      const cvs = document.getElementById('circuit-canvas');
+      const ctx = cvs.getContext('2d');
+      const G = 64; // grid cell size (px)
+      const CY = 'rgba(0,212,255,';
+      const BL = 'rgba(26,110,255,';
+
+      let traces = [], pads = [], comps = [], signals = [];
+      let staticCvs, staticCtx;
+
+      function build() {
+        const W = cvs.width  = window.innerWidth;
+        const H = cvs.height = window.innerHeight;
+        const cols = Math.ceil(W / G) + 2;
+        const rows = Math.ceil(H / G) + 2;
+
+        traces = []; pads = []; comps = [];
+        const padSet = new Set();
+
+        // Activation grid — deterministic feel from pseudo-random
+        const active = [];
+        for (let r = 0; r < rows; r++) {
+          active[r] = [];
+          for (let c = 0; c < cols; c++) {
+            active[r][c] = Math.random() < 0.58;
+          }
+        }
+
+        function markPad(c, r) {
+          const k = `${c},${r}`;
+          if (padSet.has(k)) return;
+          padSet.add(k);
+          const large = Math.random() < 0.22;
+          pads.push({ x: c * G, y: r * G, r: large ? 4.5 : 2.5, via: large });
+        }
+
+        // Horizontal traces
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols - 1; c++) {
+            if (active[r][c] && active[r][c + 1] && Math.random() < 0.42) {
+              const thick = Math.random() < 0.12; // power trace
+              traces.push({ x1: c*G, y1: r*G, x2: (c+1)*G, y2: r*G, w: thick ? 2 : 1 });
+              markPad(c, r); markPad(c + 1, r);
+            }
+          }
+        }
+
+        // Vertical traces
+        for (let r = 0; r < rows - 1; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (active[r][c] && active[r + 1][c] && Math.random() < 0.42) {
+              const thick = Math.random() < 0.12;
+              traces.push({ x1: c*G, y1: r*G, x2: c*G, y2: (r+1)*G, w: thick ? 2 : 1 });
+              markPad(c, r); markPad(c, r + 1);
+            }
+          }
+        }
+
+        // IC component footprints
+        const compCount = Math.round((W * H) / 140000);
+        for (let i = 0; i < compCount; i++) {
+          const c = 1 + Math.floor(Math.random() * (cols - 3));
+          const r = 1 + Math.floor(Math.random() * (rows - 3));
+          const wCells = 2 + Math.floor(Math.random() * 2);
+          const cw = wCells * G * 0.65;
+          const ch = G * 0.52;
+          const pins = 2 + Math.floor(Math.random() * 4);
+          comps.push({ x: c*G - cw*0.15, y: r*G - ch*0.5, w: cw, h: ch, pins });
+        }
+
+        // Draw static layer to an offscreen canvas
+        staticCvs = document.createElement('canvas');
+        staticCvs.width = W; staticCvs.height = H;
+        staticCtx = staticCvs.getContext('2d');
+        const sc = staticCtx;
+
+        // Base fill
+        sc.fillStyle = '#04091A';
+        sc.fillRect(0, 0, W, H);
+
+        // Soft radial glow areas (depth)
+        [
+          [W * 0.15, H * 0.12, 0.06],
+          [W * 0.82, H * 0.55, 0.05],
+          [W * 0.45, H * 0.90, 0.04],
+        ].forEach(([gx, gy, a]) => {
+          const g = sc.createRadialGradient(gx, gy, 0, gx, gy, Math.min(W, H) * 0.42);
+          g.addColorStop(0, `rgba(0,212,255,${a})`);
+          g.addColorStop(1, 'transparent');
+          sc.fillStyle = g;
+          sc.fillRect(0, 0, W, H);
+        });
+
+        // Ground plane hints (very subtle filled rectangles)
+        for (let i = 0; i < 4; i++) {
+          const gx = Math.random() * W * 0.7;
+          const gy = Math.random() * H * 0.7;
+          const gw = 80 + Math.random() * 120;
+          const gh = 50 + Math.random() * 80;
+          sc.fillStyle = CY + '0.02)';
+          sc.fillRect(gx, gy, gw, gh);
+        }
+
+        // IC footprints
+        comps.forEach(({ x, y, w, h, pins }) => {
+          sc.strokeStyle = CY + '0.09)';
+          sc.lineWidth = 0.75;
+          sc.strokeRect(x, y, w, h);
+          // Silkscreen label line
+          sc.strokeStyle = BL + '0.05)';
+          sc.lineWidth = 0.5;
+          sc.beginPath(); sc.moveTo(x + 4, y); sc.lineTo(x + w - 4, y); sc.stroke();
+          // Pin pads along top and bottom edges
+          const step = w / (pins + 1);
+          for (let p = 1; p <= pins; p++) {
+            const px = x + step * p;
+            sc.fillStyle = CY + '0.12)';
+            sc.fillRect(px - 3, y - 6, 6, 6);
+            sc.fillRect(px - 3, y + h, 6, 6);
+          }
+          // Pin 1 marker dot
+          sc.beginPath();
+          sc.arc(x + step, y - 3, 1.5, 0, Math.PI * 2);
+          sc.fillStyle = CY + '0.25)';
+          sc.fill();
+        });
+
+        // Traces
+        traces.forEach(({ x1, y1, x2, y2, w }) => {
+          sc.beginPath();
+          sc.moveTo(x1, y1); sc.lineTo(x2, y2);
+          sc.strokeStyle = CY + (w > 1 ? '0.14)' : '0.10)');
+          sc.lineWidth = w;
+          sc.stroke();
+        });
+
+        // Pads & vias
+        pads.forEach(({ x, y, r, via }) => {
+          // Annular ring
+          if (via) {
+            sc.beginPath();
+            sc.arc(x, y, r + 5, 0, Math.PI * 2);
+            sc.strokeStyle = CY + '0.08)';
+            sc.lineWidth = 0.75;
+            sc.stroke();
+          }
+          // Copper pad
+          sc.beginPath();
+          sc.arc(x, y, r, 0, Math.PI * 2);
+          sc.fillStyle = CY + (via ? '0.28)' : '0.15)');
+          sc.fill();
+          // Drill hole for vias
+          if (via) {
+            sc.beginPath();
+            sc.arc(x, y, 1.5, 0, Math.PI * 2);
+            sc.fillStyle = '#04091A';
+            sc.fill();
+          }
+        });
+
+        // Spawn signals
+        signals = [];
+        const count = Math.min(22, Math.ceil(traces.length * 0.03));
+        for (let i = 0; i < count; i++) {
+          signals.push({
+            t: traces[Math.floor(Math.random() * traces.length)],
+            p: Math.random(),
+            sp: 0.0012 + Math.random() * 0.0020,
+          });
+        }
+      }
+
+      let last = 0;
+      function frame(ts) {
+        const dt = Math.min(ts - last, 50); last = ts;
+        if (!staticCvs) { requestAnimationFrame(frame); return; }
+
+        // Blit static layer
+        ctx.drawImage(staticCvs, 0, 0);
+
+        // Animate signal pulses
+        signals.forEach(s => {
+          s.p += s.sp * (dt / 16);
+          if (s.p >= 1) {
+            s.p = 0;
+            s.t = traces[Math.floor(Math.random() * traces.length)];
+            s.sp = 0.0012 + Math.random() * 0.0020;
+          }
+
+          const { x1, y1, x2, y2 } = s.t;
+          const x = x1 + (x2 - x1) * s.p;
+          const y = y1 + (y2 - y1) * s.p;
+
+          // Fading trail
+          const trailP = Math.max(0, s.p - 0.18);
+          const tx = x1 + (x2 - x1) * trailP;
+          const ty = y1 + (y2 - y1) * trailP;
+          const trail = ctx.createLinearGradient(tx, ty, x, y);
+          trail.addColorStop(0, 'rgba(0,212,255,0)');
+          trail.addColorStop(1, 'rgba(0,212,255,0.18)');
+          ctx.strokeStyle = trail;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x, y); ctx.stroke();
+
+          // Outer glow
+          const grd = ctx.createRadialGradient(x, y, 0, x, y, 12);
+          grd.addColorStop(0, 'rgba(0,212,255,0.55)');
+          grd.addColorStop(0.35, 'rgba(0,212,255,0.18)');
+          grd.addColorStop(1, 'rgba(0,212,255,0)');
+          ctx.fillStyle = grd;
+          ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2); ctx.fill();
+
+          // Core dot
+          ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#00D4FF'; ctx.fill();
+        });
+
+        requestAnimationFrame(frame);
+      }
+
+      build();
+      window.addEventListener('resize', build);
+      requestAnimationFrame(frame);
+    })();
+
     // ── Mobile nav ──
     document.getElementById('nav-toggle').addEventListener('click', () => {
       document.getElementById('mobile-menu').classList.toggle('open');
@@ -1763,6 +2147,46 @@
         setTimeout(renderSuggestions, 500);
       }, 600);
     }
+
+    // ── Intake form submission (Formspree) ──
+    document.getElementById('intake-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = document.getElementById('intake-submit');
+      const label = document.getElementById('submit-label');
+      const spinner = document.getElementById('submit-spinner');
+      const errorEl = document.getElementById('form-error');
+
+      // Honeypot check
+      if (form._gotcha && form._gotcha.value) return;
+
+      label.textContent = 'Sending…';
+      spinner.classList.remove('hidden');
+      submitBtn.disabled = true;
+      errorEl.classList.add('hidden');
+
+      const data = new FormData(form);
+
+      try {
+        const res = await fetch('https://formspree.io/f/xpqbzbak', {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          form.classList.add('hidden');
+          document.getElementById('form-success').classList.remove('hidden');
+        } else {
+          throw new Error('Server error');
+        }
+      } catch {
+        errorEl.classList.remove('hidden');
+        label.textContent = 'Send My Intake Request';
+        spinner.classList.add('hidden');
+        submitBtn.disabled = false;
+      }
+    });
 
     // ── Navbar scroll effect ──
     window.addEventListener('scroll', () => {
